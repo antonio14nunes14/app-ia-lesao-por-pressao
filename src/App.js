@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { analisarImagem } from "./geminiService.js";
 import gerarRelatorio from "./Relatorio.js"; // ✅ Importa a função certa
+import "./App.css";
 
 function App() {
   const [dados, setDados] = useState({
@@ -58,84 +59,118 @@ function App() {
   };
 
   return (
-    <div style={{ padding: 20, fontFamily: "Arial" }}>
-      <h2>📋 Dados do Paciente</h2>
+    <div className="app-container">
+      <div className="app-content">
+        <div className="section-card">
+          <h2 className="section-title">📋 Dados do Paciente</h2>
 
-      <input
-        type="text"
-        placeholder="Nome"
-        value={dados.nome}
-        onChange={(e) => setDados({ ...dados, nome: e.target.value })}
-      />
-      <input
-        type="number"
-        placeholder="Idade"
-        value={dados.idade}
-        onChange={(e) => setDados({ ...dados, idade: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="Sexo"
-        value={dados.sexo}
-        onChange={(e) => setDados({ ...dados, sexo: e.target.value })}
-      />
-      <input
-        type="text"
-        placeholder="Leito"
-        value={dados.leito}
-        onChange={(e) => setDados({ ...dados, leito: e.target.value })}
-      />
-      <textarea
-        placeholder="Observações"
-        value={dados.observacoes}
-        onChange={(e) => setDados({ ...dados, observacoes: e.target.value })}
-      />
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Nome"
+              value={dados.nome}
+              onChange={(e) => setDados({ ...dados, nome: e.target.value })}
+            />
+          </div>
 
-      <h3>📷 Captura da Imagem</h3>
-      <video ref={videoRef} autoPlay playsInline style={{ width: "100%" }} />
-      <button onClick={iniciarCamera}>Iniciar Câmera</button>
-      <button onClick={capturarFoto}>Capturar Foto</button>
-      <canvas ref={canvasRef} style={{ display: "none" }} />
+          <div className="form-group">
+            <input
+              type="number"
+              className="form-input"
+              placeholder="Idade"
+              value={dados.idade}
+              onChange={(e) => setDados({ ...dados, idade: e.target.value })}
+            />
+          </div>
 
-      {imagem && (
-        <>
-          <h4>Prévia:</h4>
-          <img src={imagem} alt="capturada" style={{ width: "100%", borderRadius: 8 }} />
-          <button onClick={analisar} disabled={processando}>
-            {processando ? "⏳ Analisando..." : "🔍 Analisar Imagem"}
-          </button>
-        </>
-      )}
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Sexo"
+              value={dados.sexo}
+              onChange={(e) => setDados({ ...dados, sexo: e.target.value })}
+            />
+          </div>
 
-      {resultado && (
-        <div style={{ marginTop: 20 }}>
-          <h3>🩺 Resultado:</h3>
-          <p>{resultado}</p>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Leito"
+              value={dados.leito}
+              onChange={(e) => setDados({ ...dados, leito: e.target.value })}
+            />
+          </div>
 
-          {/* ✅ Botão de geração de relatório com await e tratamento de erro */}
-          <button
-            onClick={async () => {
-              try {
-                await gerarRelatorio(dados, imagem, resultado);
-              } catch (e) {
-                console.error("Erro ao gerar relatório:", e);
-                alert("Ocorreu um erro ao gerar o relatório. Verifique o console.");
-              }
-            }}
-            style={{
-              marginTop: 10,
-              backgroundColor: "#007bff",
-              color: "#fff",
-              padding: "10px 15px",
-              border: "none",
-              borderRadius: 6,
-              cursor: "pointer",
-            }}
-          >
-            📄 Gerar Relatório PDF
-          </button>
+          <div className="form-group">
+            <textarea
+              className="form-textarea"
+              placeholder="Observações"
+              value={dados.observacoes}
+              onChange={(e) => setDados({ ...dados, observacoes: e.target.value })}
+            />
+          </div>
         </div>
-      )}
+
+        <div className="section-card">
+          <h3 className="section-subtitle">📷 Captura da Imagem</h3>
+          <div className="video-container">
+            <video ref={videoRef} autoPlay playsInline />
+          </div>
+          <div className="button-group">
+            <button className="btn btn-primary" onClick={iniciarCamera}>
+              📹 Iniciar Câmera
+            </button>
+            <button className="btn btn-secondary" onClick={capturarFoto}>
+              📸 Capturar Foto
+            </button>
+          </div>
+          <canvas ref={canvasRef} style={{ display: "none" }} />
+
+          {imagem && (
+            <>
+              <h4 className="preview-label">Prévia:</h4>
+              <img src={imagem} alt="capturada" className="image-preview" />
+              <div className="button-group">
+                <button
+                  className={`btn btn-primary ${processando ? "processing" : ""}`}
+                  onClick={analisar}
+                  disabled={processando}
+                >
+                  {processando ? "⏳ Analisando..." : "🔍 Analisar Imagem"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {resultado && (
+          <div className="section-card">
+            <div className="result-container">
+              <h3 className="result-title">🩺 Resultado:</h3>
+              <p className="result-text">{resultado}</p>
+            </div>
+
+            <div className="button-group">
+              <button
+                className="btn btn-success"
+                onClick={async () => {
+                  try {
+                    await gerarRelatorio(dados, imagem, resultado);
+                  } catch (e) {
+                    console.error("Erro ao gerar relatório:", e);
+                    alert("Ocorreu um erro ao gerar o relatório. Verifique o console.");
+                  }
+                }}
+              >
+                📄 Gerar Relatório PDF
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
